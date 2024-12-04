@@ -1,8 +1,11 @@
-﻿let solutions =
+﻿open System.IO
+open System.Text.RegularExpressions
+
+let solutions =
   [| (fun () -> // Day 1
        // Part One
-       let path = ("data", "input_1.txt") |> System.IO.Path.Combine
-       let lines = path |> System.IO.File.ReadAllLines
+       let path = ("data", "input_1.txt") |> Path.Combine
+       let lines = path |> File.ReadAllLines
 
        let (leftList, rightList) =
          (([||], [||]), lines)
@@ -30,8 +33,8 @@
        printfn "%d" score)
      (fun () -> // Day 2
        // Part One
-       let path = ("data", "input_2.txt") |> System.IO.Path.Combine
-       let lines = path |> System.IO.File.ReadAllLines
+       let path = ("data", "input_2.txt") |> Path.Combine
+       let lines = path |> File.ReadAllLines
 
        let reports =
          lines
@@ -67,7 +70,28 @@
          )
          |> Array.length
 
-       printfn "%d" safeReportCountWithTolerance) |]
+       printfn "%d" safeReportCountWithTolerance)
+     (fun () -> // Day 3
+       // Part One
+       let path = ("data", "input_3.txt") |> Path.Combine
+       let lines = path |> File.ReadAllLines
+
+       let pattern = "mul\(\d{1,3},\d{1,3}\)"
+
+       let result =
+         lines
+         |> Array.map (fun line ->
+           (line, pattern)
+           |> Regex.Matches
+           |> Seq.cast<Match>
+           |> Seq.map (fun occurrence ->
+             ([| ',' |], System.StringSplitOptions.RemoveEmptyEntries)
+             |> (occurrence.Value[4 .. occurrence.Value.Length - 2]).Split)
+           |> Seq.map (fun terms -> (int terms[0] * int terms[1]))
+           |> Seq.sum)
+         |> Array.sum
+
+       printfn "%A" result) |]
 
 [<EntryPoint>]
 let Main args =
