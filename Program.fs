@@ -17,7 +17,17 @@
          (0, pairs)
          ||> Array.fold (fun acc (leftId, rightId) -> acc + (leftId - rightId |> abs))
 
-       printfn "Part One: %d" distance)
+       printfn "%d" distance
+
+       // Part Two
+       let score =
+         leftList
+         |> Array.map (fun leftId ->
+           (rightList |> Array.filter (fun rightId -> leftId = rightId) |> Array.length)
+           * leftId)
+         |> Array.sum
+
+       printfn "%d" score)
      (fun () -> // Day 2
        // Part One
        let path = ("data", "input_2.txt") |> System.IO.Path.Combine
