@@ -40,16 +40,34 @@
            |> line.Split
            |> Array.map (fun level -> int level))
 
-       let safeReportCount =
-         reports
-         |> Array.filter (fun report ->
-           report
-           |> Array.pairwise
-           |> Array.forall (fun (level1, level2) -> (level1 - level2) |> abs <= 3 && (level1 - level2) |> abs >= 1)
+       let IsReportSafe report =
+         report
+         |> Array.pairwise
+         |> Array.forall (fun (level1, level2) ->
+           (level1 - level2) |> abs <= 3
+           && (level1 - level2) |> abs >= 1
            && (report = (report |> Array.sort) || report = (report |> Array.sortDescending)))
+
+       let safeReportCount =
+         reports |> Array.filter (fun report -> report |> IsReportSafe) |> Array.length
+
+       printfn "%d" safeReportCount
+
+       // Part Two
+       let safeReportCountWithTolerance =
+         reports
+         |> Array.filter (
+           (fun report ->
+             report
+             |> Array.mapi (fun i _ ->
+               report
+               |> Array.mapi (fun j level -> if j = i then None else Some level)
+               |> Array.choose id)
+             |> Array.exists (fun report -> report |> IsReportSafe))
+         )
          |> Array.length
 
-       printfn "Part One: %d" safeReportCount) |]
+       printfn "%d" safeReportCountWithTolerance) |]
 
 [<EntryPoint>]
 let Main args =
